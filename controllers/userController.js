@@ -80,3 +80,71 @@ exports.login = async (req, res) => {
       res.status(500).json({ message: error.message });
     }
   };
+
+  exports.getUserDetails = async (req, res) => {
+    try {
+      const user = await User.findById(req.user._id).select('-password');
+      
+      if (!user) {
+        return res.status(404).json({
+          status: "failed",
+          message: "User not found"
+        });
+      }
+      
+      res.status(200).json({
+        status: "success",
+        data: {
+          _id: user._id,
+          email: user.email,
+          role: user.role,
+          createdAt: user.createdAt,
+          updatedAt: user.updatedAt
+        }
+      });
+    } catch (error) {
+      console.error("Get user details failed:", error.message);
+      res.status(500).json({
+        status: "failed",
+        message: "Internal Server Error"
+      });
+    }
+  };
+  
+  exports.updateUsername = async (req, res) => {
+    try {
+      const { username } = req.body;
+      
+      if (!username) {
+        return res.status(400).json({
+          status: "failed",
+          message: "Username is required"
+        });
+      }
+      
+      const updatedUser = await User.findByIdAndUpdate(
+        req.user._id,
+        { username: username },
+        { new: true, runValidators: true }
+      ).select('-password');
+      
+      if (!updatedUser) {
+        return res.status(404).json({
+          status: "failed",
+          message: "User not found"
+        });
+      }
+      
+      res.status(200).json({
+        status: "success",
+        message: "Username updated successfully",
+        data: updatedUser
+      });
+    } catch (error) {
+      console.error("Username update failed:", error.message);
+      res.status(500).json({
+        status: "failed",
+        message: "Internal Server Error"
+      });
+    }
+  };
