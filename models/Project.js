@@ -3,8 +3,7 @@ const mongoose = require('mongoose');
 const projectSchema = new mongoose.Schema({
   project: { 
     type: String, 
-    required: true, 
-    unique: true 
+    required: true
   },
   user: {
     type: mongoose.Schema.Types.ObjectId,
@@ -12,6 +11,8 @@ const projectSchema = new mongoose.Schema({
     required: true
   }
 }, { timestamps: true });
+
+projectSchema.index({ project: 1, user: 1 }, { unique: true });
 
 const Project = mongoose.model('Project', projectSchema);
 module.exports = Project;

@@ -1,7 +1,6 @@
 const Project = require('../models/Project');
 const Episode = require('../models/Episode');
 
-// 1. Create project API
 exports.createProject = async (req, res) => {
   try {
     const { project } = req.body;
